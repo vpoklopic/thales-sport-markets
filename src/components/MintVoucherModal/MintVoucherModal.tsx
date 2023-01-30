@@ -20,9 +20,9 @@ import useSUSDWalletBalance from 'queries/wallet/usesUSDWalletBalance';
 import SelectInput from 'components/SelectInput';
 import Checkbox from 'components/fields/Checkbox';
 import { getAddress, isAddress } from 'ethers/lib/utils';
-import { ValidationTooltip } from 'pages/Quiz/styled-components';
 import { LINKS } from 'constants/links';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { Tooltip, withStyles } from '@material-ui/core';
 
 type MintVoucherModalProps = {
     onClose: () => void;
@@ -110,7 +110,7 @@ export const MintVoucherModal: React.FC<MintVoucherModalProps> = ({ onClose }) =
     const handleAllowance = async (approveAmount: BigNumber) => {
         const { signer, sUSDContract, overtimeVoucherContract } = networkConnector;
         if (signer && sUSDContract && overtimeVoucherContract) {
-            const id = toast.loading(t('market.toast-messsage.transaction-pending'));
+            const id = toast.loading(t('market.toast-message.transaction-pending'));
             setIsAllowing(true);
 
             try {
@@ -126,7 +126,7 @@ export const MintVoucherModal: React.FC<MintVoucherModalProps> = ({ onClose }) =
                 if (txResult && txResult.transactionHash) {
                     toast.update(
                         id,
-                        getSuccessToastOptions(t('market.toast-messsage.approve-success', { token: PAYMENT_CURRENCY }))
+                        getSuccessToastOptions(t('market.toast-message.approve-success', { token: PAYMENT_CURRENCY }))
                     );
                     setIsAllowing(false);
                 }
@@ -141,7 +141,7 @@ export const MintVoucherModal: React.FC<MintVoucherModalProps> = ({ onClose }) =
     const handleSubmit = async () => {
         const { overtimeVoucherContract, signer } = networkConnector;
         if (overtimeVoucherContract && signer) {
-            const id = toast.loading(t('market.toast-messsage.transaction-pending'));
+            const id = toast.loading(t('market.toast-message.transaction-pending'));
             setIsSubmitting(true);
             try {
                 const overtimeVoucherContractWithSigner = overtimeVoucherContract.connect(signer);
@@ -253,6 +253,8 @@ export const MintVoucherModal: React.FC<MintVoucherModalProps> = ({ onClose }) =
                         <ValidationTooltip
                             open={!isRecipientValid}
                             title={t('common.errors.invalid-address') as string}
+                            placement={'top'}
+                            arrow={true}
                         >
                             <Input
                                 type="text"
@@ -370,9 +372,33 @@ const Input = styled.input`
     }
 `;
 
-const ButtonContainer = styled(FlexDivCentered)`
-    margin: 30px 0 20px 0;
-`;
+const ValidationTooltip = withStyles(() => ({
+    tooltip: {
+        minWidth: '100%',
+        width: '400px',
+        maxWidth: '400px',
+        marginBottom: '7px',
+        backgroundColor: '#303656',
+        color: '#E26A78',
+        border: '1.5px solid #E26A78',
+        borderRadius: '2px',
+        fontSize: '12px',
+        fontWeight: 600,
+        textTransform: 'uppercase',
+    },
+    arrow: {
+        '&:before': {
+            border: '1.5px solid #E26A78',
+            backgroundColor: '#303656',
+            boxSizing: 'border-box',
+        },
+        width: '13px',
+        height: '10px',
+        bottom: '-2px !important',
+    },
+}))(Tooltip);
+
+const ButtonContainer = styled(FlexDivCentered)``;
 
 const ModalButton = styled(Button)``;
 
